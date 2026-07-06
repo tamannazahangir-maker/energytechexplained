@@ -173,13 +173,10 @@ footer { border-top: 1px solid var(--line); padding: 40px 60px; text-align: cent
   .flow-steps { grid-template-columns: 1fr; }
   .flow-step:not(:last-child)::after { content: '↓'; right: 50%; top: auto; bottom: -18px; transform: translateX(50%); }
   section, .hero, nav.top { padding-left: 24px; padding-right: 24px; }
-  .canvas { height: 800px; }
-  .zone { width: 100% !important; left: 0 !important; }
-  .zone:nth-child(1) { top: 0 !important; height: 18% !important; }
-  .zone:nth-child(2) { top: 20% !important; height: 18% !important; }
-  .zone:nth-child(3) { top: 40% !important; height: 18% !important; }
-  .zone:nth-child(4) { top: 60% !important; height: 18% !important; }
-  .zone:nth-child(5) { top: 80% !important; height: 18% !important; }
+  .canvas { height: auto !important; display: flex; flex-direction: column; gap: 10px; }
+  .zone { position: relative !important; left: auto !important; top: auto !important; width: auto !important; height: auto !important; min-height: 92px; padding: 22px 24px; }
+  .zone .zone-name { line-height: 1.35; }
+  .zone .hover-hint { position: static; opacity: 0.5; margin-top: 10px; }
   .project { grid-template-columns: 70px 1fr; }
   .project .tag { display: none; }
   .section-head { grid-template-columns: 60px 1fr; }
@@ -650,6 +647,19 @@ footer { border-top: 1px solid var(--line); padding: 40px 60px; text-align: cent
 
 
 
+
+/* Static (no-click) landscape: all clusters shown as readable text */
+.landscape-static { display: flex; flex-direction: column; gap: 26px; }
+.ls-block { background: var(--paper); border: 1px solid var(--line); border-top: 4px solid var(--line); padding: 32px 36px; }
+.ls-accent { width: 30px; height: 1.5px; margin-bottom: 14px; }
+.ls-title { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 600; margin: 0 0 18px; letter-spacing: -0.3px; line-height: 1.15; }
+.landscape-static .gen-panel { display: block; }
+.landscape-static .ls-subhead { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--accent); margin: 30px 0 8px !important; padding-top: 22px !important; border-top: 2px solid var(--line) !important; text-transform: none; letter-spacing: 0; }
+@media (max-width: 900px) {
+  .ls-block { padding: 24px 20px; }
+  .ls-title { font-size: 24px; }
+  .landscape-static .ls-subhead { font-size: 18px; }
+}
 </style>
 </head>
 <body>
@@ -693,29 +703,127 @@ footer { border-top: 1px solid var(--line); padding: 40px 60px; text-align: cent
   <div class="basics-narrative">
     <h3 class="narrative-title">How the Swedish grid stays in balance</h3>
     <p class="lede-mini">At any given moment, the energy a country produces must equal the energy it consumes (its load). Put simply: <strong>Energy Load = Energy Produced</strong>.</p>
-    <p>The primary responsibility of an electricity provider is to maintain this balance, and to keep the grid running at exactly <strong>50 Hz</strong>. That figure is the European standard frequency. Every <em>synchronous</em> generator on the continent, meaning every machine mechanically locked to the grid's rhythm, spins at the same rate.</p>
-    <p>A typical load reflects what people use electricity for. In a home, this includes appliances, essentials such as lighting and internet, and increasingly an electric or hybrid car charging in the garage. In a factory, the load is far greater, and scales with it's output.</p>
-    <p>Total load therefore varies considerably with population size, the industrial profile of the area, and the time of day, week, and year. It rarely sits still.</p>
-    <p>Matching production to this moving target is the difficult part. The provider needs a reliable understanding of how consumers use electricity, the ability to correct deviations in real time, and contingency plans for unforeseen events such as weather damage to infrastructure, all while holding the grid at 50 Hz. This matters because the modern grid is tightly interconnected across borders. Sweden sits within the <strong>Nordic synchronous area</strong>, sharing its frequency with Norway, Finland, and eastern Denmark. Without going into the technical detail, even a small deviation in one country can cause significant disruption for the others connected to it.</p>
-    <p>In Sweden, electricity comes mostly from hydropower, nuclear and wind, with smaller contributions from biofuels and solar. Most of the hydropower plants are located in the northern and central regions, where the major rivers run, while most of the wind and nuclear capacity is concentrated further south. For an overview of production against load over time, see Energimyndigheten's <a href="https://www.energimyndigheten.se/en/facts-and-figures/swedens-energy-system--an-overview/how-the-energy-system-works/an-energy-system-in-balance/" target="_blank" rel="noopener">An energy system in balance</a>; for the geography of individual plants, see Vattenfall's <a href="https://powerplants.vattenfall.com/#/view=map/sort=name" target="_blank" rel="noopener">interactive map of power plants</a>.</p>
-    <p>Yet most of the population, and most of the industry, is concentrated in the south, close to the ports. This creates the next problem for providers to solve: how to balance consumption concentrated in the south against production concentrated in the north. In practice, roughly <strong>15 to 20 TWh of electricity flows from north to south each year</strong> to bridge the gap.</p>
+    <p>The primary responsibility of an electricity provider is to maintain this balance, and to keep the grid running at exactly <strong>50 Hz</strong>. That figure is the European standard frequency. Every generator on the continent connected to the grid must spin at 50 Hz at all times.</p>
+    <p>A typical load reflects what people use electricity for. In a home, this includes appliances, essentials such as lighting and internet, and increasingly an electric or hybrid car charging in the garage. In a factory, the load is far greater, and scales with it's output. Total load therefore varies considerably with population size, the industrial profile of the area, and the time of day, week, and year. It rarely remains same.</p>
+<!-- ==================== COPY FROM HERE ==================== -->
+<div class="ee-grid-anim">
+<style>
+  .ee-grid-anim {
+    /* Retheme here: adjust these five values to match your site */
+    --ee-ink: #2c2c2a;        /* primary text and strong details */
+    --ee-muted: #5f5e5a;      /* structures: tower, pylons, wires */
+    --ee-hairline: #b4b2a9;   /* light outlines: house, ground, window panes */
+    --ee-surface: #f7f6f2;    /* fills: house body, stator face */
+    --ee-energy: #ef9f27;     /* the flowing power and the lit window */
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .ee-grid-anim svg { display: block; width: 100%; height: auto; }
+  .ee-grid-anim .ee-rotor,
+  .ee-grid-anim .ee-gen-rotor { transform-box: view-box; }
+  .ee-grid-anim .ee-rotor { transform-origin: 80px 120px; }
+  .ee-grid-anim .ee-gen-rotor { transform-origin: 172px 244px; }
+  @keyframes ee-spin { to { transform: rotate(360deg); } }
+  @keyframes ee-flow { to { stroke-dashoffset: -18; } }
+  @keyframes ee-pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .ee-grid-anim .ee-rotor { animation: ee-spin 5s linear infinite; }
+    .ee-grid-anim .ee-gen-rotor { animation: ee-spin 1s linear infinite; }
+    .ee-grid-anim .ee-flow { animation: ee-flow .9s linear infinite; }
+    .ee-grid-anim .ee-win { animation: ee-pulse 2.4s ease-in-out infinite; }
+  }
+</style>
+<svg viewBox="0 0 680 340" role="img" aria-labelledby="ee-anim-title ee-anim-desc">
+  <title id="ee-anim-title">Generation, transmission and load</title>
+  <desc id="ee-anim-desc">A wind turbine and a synchronous generator spinning at 50 Hz feed electricity along a power line over two pylons to a house, where a window lights up.</desc>
+
+  <!-- Ground -->
+  <line x1="40" y1="270" x2="640" y2="270" stroke="var(--ee-hairline)" stroke-width="1"/>
+
+  <!-- Wind turbine -->
+  <line x1="80" y1="270" x2="80" y2="124" stroke="var(--ee-muted)" stroke-width="4" stroke-linecap="round"/>
+  <g class="ee-rotor">
+    <path d="M80 120 C76 95 76 75 80 62 C84 75 84 95 80 120 Z" fill="var(--ee-muted)"/>
+    <path d="M80 120 C76 95 76 75 80 62 C84 75 84 95 80 120 Z" fill="var(--ee-muted)" transform="rotate(120 80 120)"/>
+    <path d="M80 120 C76 95 76 75 80 62 C84 75 84 95 80 120 Z" fill="var(--ee-muted)" transform="rotate(240 80 120)"/>
+  </g>
+  <circle cx="80" cy="120" r="6" fill="var(--ee-ink)"/>
+
+  <!-- Synchronous generator: plinth, finned stator, bore, salient-pole rotor -->
+  <rect x="150" y="264" width="44" height="6" rx="1.5" fill="var(--ee-muted)"/>
+  <circle cx="172" cy="244" r="22.5" fill="none" stroke="var(--ee-muted)" stroke-width="4" stroke-dasharray="2 4" opacity=".8"/>
+  <circle cx="172" cy="244" r="20" fill="var(--ee-surface)" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <circle cx="172" cy="244" r="15" fill="none" stroke="var(--ee-hairline)" stroke-width="0.75"/>
+  <g class="ee-gen-rotor">
+    <g transform="translate(172,244)" fill="var(--ee-muted)">
+      <path d="M-3.5 0 L-3.5 -7 L-9 -9 A 14 14 0 0 1 9 -9 L3.5 -7 L3.5 0 Z"/>
+      <path d="M-3.5 0 L-3.5 -7 L-9 -9 A 14 14 0 0 1 9 -9 L3.5 -7 L3.5 0 Z" transform="rotate(180)"/>
+    </g>
+  </g>
+  <circle cx="172" cy="244" r="3.5" fill="var(--ee-ink)"/>
+  <line x1="196" y1="244" x2="202" y2="244" stroke="var(--ee-hairline)" stroke-width="0.75" stroke-dasharray="2 2"/>
+  <text x="206" y="248" font-size="12" font-weight="700" fill="var(--ee-muted)">50 Hz</text>
+  <line x1="172" y1="220" x2="172" y2="198" stroke="var(--ee-muted)" stroke-width="1.5"/>
+
+  <!-- Pylons -->
+  <g stroke="var(--ee-muted)" stroke-width="1.5" fill="none">
+    <path d="M292 270 L300 156 L308 270"/>
+    <line x1="284" y1="168" x2="316" y2="168"/>
+    <line x1="286" y1="182" x2="314" y2="182"/>
+    <path d="M422 270 L430 156 L438 270"/>
+    <line x1="414" y1="168" x2="446" y2="168"/>
+    <line x1="416" y1="182" x2="444" y2="182"/>
+  </g>
+
+  <!-- Transmission line and flowing power -->
+  <path d="M83 190 Q127 212 172 198 Q236 228 300 162 Q365 194 430 162 Q490 202 548 192" fill="none" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <path class="ee-flow" d="M83 190 Q127 212 172 198 Q236 228 300 162 Q365 194 430 162 Q490 202 548 192" fill="none" stroke="var(--ee-energy)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 15"/>
+
+  <!-- House (load) -->
+  <line x1="548" y1="192" x2="548" y2="214" stroke="var(--ee-muted)" stroke-width="2"/>
+  <polygon points="497,212 560,176 623,212" fill="var(--ee-surface)" stroke="var(--ee-hairline)" stroke-width="1"/>
+  <rect x="505" y="212" width="110" height="58" fill="var(--ee-surface)" stroke="var(--ee-hairline)" stroke-width="1"/>
+  <rect class="ee-win" x="522" y="228" width="26" height="26" rx="2" fill="var(--ee-energy)"/>
+  <g stroke="var(--ee-hairline)" stroke-width="1">
+    <line x1="535" y1="228" x2="535" y2="254"/>
+    <line x1="522" y1="241" x2="548" y2="241"/>
+  </g>
+  <rect x="572" y="236" width="20" height="34" rx="2" fill="none" stroke="var(--ee-hairline)" stroke-width="1"/>
+
+  <!-- Labels -->
+  <text x="140" y="298" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Generation</text>
+  <text x="140" y="316" text-anchor="middle" font-size="12" fill="var(--ee-muted)">Wind + synchronous plant</text>
+  <text x="365" y="298" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Transmission</text>
+  <text x="365" y="316" text-anchor="middle" font-size="12" fill="var(--ee-muted)">High-voltage lines</text>
+  <text x="560" y="298" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Load</text>
+  <text x="560" y="316" text-anchor="middle" font-size="12" fill="var(--ee-muted)">Home consumption</text>
+</svg>
+</div>
+<!-- ==================== COPY TO HERE ==================== -->
+
+</body>
+</html>
+
+    <p>Matching production to this moving target is the difficult part. The provider needs a reliable understanding of how consumers use electricity, the ability to correct deviations in real time, and plan for contingency in case of unforeseen events such as weather damage to infrastructure - all while holding the grid at 50 Hz. This matters greatly because the modern grid is tightly interconnected across borders. Sweden sits within the <strong>Nordic synchronous area</strong> which means it shares the same frequency with Norway, Finland, and eastern Denmark. Without diving into the technical detail, even a small deviation in one country can cause significant disruption for the others connected to it.</p>
+    <p>In Sweden, electricity comes mostly from hydropower, nuclear and wind, with smaller contributions from biofuels and solar. Most of the hydropower plants are located in the northern and central regions, where the major rivers run, while most of the wind and nuclear capacity is concentrated further south. For an overview of production against load over time, see Energimyndigheten's <a href="https://www.energimyndigheten.se/en/facts-and-figures/swedens-energy-system--an-overview/how-the-energy-system-works/an-energy-system-in-balance/" target="_blank" rel="noopener">An energy system in balance</a>; for the geography of individual plants, see Vattenfall's <a href="https://powerplants.vattenfall.com/#/view=map/sort=name" target="_blank" rel="noopener">interactive map of power plants</a>; or even this one from grid rebase that has a deatiled map of types of production, amount of it and all the major connections for Sweden <a href="https://grid.rebase.energy/" target="_blank" rel="noopener">Grid Rebase Energy</a>.</p>
+    <p>Yet most of the population, and most of the industry ie. most of the load is concentrated in the south, close to the ports. This creates the next problem for providers to solve: how to balance consumption concentrated in the south against production concentrated in the north. In practice, roughly <strong>15 to 20 TWh of electricity flows from north to south each year</strong> to bridge the gap.</p>
   </div>
 
   <!-- The grid as highway -->
   <div class="basics-narrative">
     <h3 class="narrative-title">The grid as a highway</h3>
-    <p>Consumers (households, businesses and industry) receive electricity produced from hydro, nuclear, wind and sun, delivered through the grid. The grid functions as an interconnected highway, moving electricity from where it is generated to where it is needed.</p>
-    <p>Most grids are <strong>centralised</strong>: electricity flows in one direction, from generation to the point of consumption. When providers plan how much electricity to produce, they must account for transmission losses and timing. In practice, this means calculating how much to produce, where it should be delivered, and at what time. <strong>Transmission losses are roughly proportional to line length</strong>; the longer the line, the larger the loss.</p>
-    <p>In a long, thin country like Sweden, this north-to-south flow requires long transmission corridors, which in turn carry larger losses for providers to absorb. For the consumer, this translates into higher electricity prices, alongside a longer recovery window in the event of an unforeseen outage.</p>
+    <p>A grid simply is the infrastructure that connects consumers (households, businesses and industry) to the energy production sites. The grid functions as an interconnected highway, moving electricity from where it is generated to where it is needed.There is a detailed section later on about how the grid operates.</p>
+    <p>Most grids are <strong>centralised</strong>: electricity flows in one direction, from generation to the point of consumption. When providers plan how much electricity to produce, they must account for transmission losses and timing. In practice, this means calculating how much to produce, where it should be delivered, and at what time. <strong>Transmission losses are roughly proportional to line length</strong>; the longer the line, the larger the loss. This is an important aspect to remember as we introduce sources such as batteries at conusmer level that needs bidirectional flow of electricity to fully utilized</p>
+    <p>In a long, thin country like Sweden, this north-to-south flow requires long transmission corridors, which in turn carry larger losses for providers to absorb. For the consumer, this translates into higher electricity prices in the south, alongside a longer recovery window in the event of an unforeseen outage.</p>
   </div>
 
   <!-- 140 -> 240 TWh -->
   <div class="basics-narrative">
-    <h3 class="narrative-title">And demand is about to roughly double</h3>
-    <p>That is the situation under today's infrastructure. Sweden's annual consumption is projected to rise from around <strong>140 TWh</strong> today to <strong>240 to 280 TWh</strong> by 2045, roughly double. Three forces drive this growth: previously fossil-dependent industries adopting cleaner processes such as electric-arc in steelmaking; the electrification of transport across buses, trucks and cars; and the expansion of data centres to support AI workloads. These shifts are necessary, and broadly welcome.</p>
-    <p>The open question is how to meet the scale-up. Which sources can produce electricity at that volume? Can the existing grid carry the load, and if so on what terms; does it need reinforcement, or should we consider a more decentralised model? What additional services are required to keep it stable? These are the questions the rest of the site will work through.</p>
+    <h3 class="narrative-title">The Problem Ahead of Us</h3>
+    <p>That is the situation under today's infrastructure. Sweden's annual consumption is projected to rise from around <strong>140 TWh</strong> today to <strong>240 to 280 TWh</strong> by 2045, roughly double of today's needs. There are three forces drive this growth: previously fossil-dependent industries are to adopting cleaner processes such as electric-arc in steelmaking; the electrification of transport is happening across buses, trucks and cars; and there are major expansion of data centres planned to support AI workloads. These shifts are necessary, and broadly welcome for the overall growth of the society.</p>
+    <p>The open question is how do we meet the deamdns of the scale-up. Which sources can produce electricity at that volume? Can the existing grid carry the load, and if so on what terms; does it need reinforcement, or should we consider a more decentralised model? What additional services are required to keep it stable? These are the questions the rest of the site will work through.</p>
     <p>For a data-driven view of where the demand will materialise geographically, see AI Sweden's <a href="https://www.behovskartan.se/" target="_blank" rel="noopener">behovskartan.se</a>.</p>
-    <p>The remainder of this site examines how different technologies address these problems for both producers and consumers, introduces the key players and suppliers, and notes where the technological limits currently sit.</p>
+    <p>This site attempts tp examine how different technologies address these problems for both producers and consumers, introduces the key players,technologies and suppliers, and notes on what is a technological limit and what is an economical limit.</p>
   </div>
 
   <!-- Components of a Grid -->
@@ -725,13 +833,374 @@ footer { border-top: 1px solid var(--line); padding: 40px 60px; text-align: cent
   </div>
 
   <div class="basics-narrative">
-    <p class="lede-mini">Before we dive into details, let's get some basics straight. The grid is the electrical highway that carries electricity from where it is generated to our homes and industries. Its job is to move that power across the country and deliver it at a voltage our equipment can actually use, around <strong>230 V</strong> in a Swedish home, while holding the frequency steady at <strong>50 Hz</strong>. Everything that follows is really about how it manages those two things at once - hold the voltage at the level it is supposed to be and steady frequency.</p>
+    <p class="lede-mini">Before we dive into details, let's get some basics straight about the grid.</p> 
+    <p>As menetioned before, the grid is the electrical highway that carries electricity from where it is generated to our homes and industries. Its job is to move that power across the country and deliver it at a voltage our equipment can actually use, around <strong>230 V</strong> in a Swedish home, while holding the frequency steady at <strong>50 Hz</strong>. Everything that follows is really about how it manages those two things at once - hold the voltage at the level it is supposed to be and steady frequency.</p>
     <p>A power plant, say a hydropower station, generates electricity at a fairly high voltage, in the range of tens of kilovolts. But that voltage has to stepped down on the way to us. The ability to change voltage on demand is what makes our current grid. We use <strong>alternating current (AC)</strong> rather than direct current (DC) precisely because AC voltage can be raised or lowered easily, and with very little loss, using transformers. If you want to look up how AC won to run our grid, please google "war of the currents" between Edison and Tesla. </p>
-    <p>In fact, right off the production site, the voltage is stepped up to a much higher range - from tens of kV to hundreds of kV. This is done because of transmission losses. When current flows through a wire, some energy is always lost as heat, and those losses grow quickly with distance. Carrying the same amount of power at a higher voltage means a lower current, and therefore far smaller losses over long distances. This step up in voltage is done by a step-up transformer in a substation. It marks the official start of the <strong>transmission grid</strong>.</p>
-    <p>Transmission lines run at very high voltage: in Sweden, 220 kV and 400 kV, while worldwide the range runs from roughly 155,000 up to 765,000 volts. These lines are strung between large steel towers, though they can also be buried underground. They are usually three conducting lines, one for each phase of the AC supply, and sometimes a thinner wire along the very top that acts as a ground wire to protect against lightning. AC lines become uneconomic beyond a few hundred kilometres, which is why the very longest links and undersea cables use high-voltage DC (HVDC) instead. Sweden has several, such as the Fenno-Skan link to Finland.</p>
+    <p>In fact, right off the production site, the voltage is stepped up to a much higher range - from tens of kV to hundreds of kV. This is done because of transmission losses. When current flows through a wire, some energy is always lost as heat, and those losses grow quickly with distance. Stepping up the voltage reduces the amount of current through the wire for the same part, and therefore far smaller losses over long distances. This step up in voltage is done by a step-up transformer in a substation. It marks the official start of the <strong>transmission grid</strong>.</p>
+    <p>Transmission lines run at very high voltage: in Sweden, 220 kV and 400 kV, while worldwide the range runs from roughly 155 kV up to 765 kV. These lines are strung between large steel towers, though they can also be buried underground. They are usually three conducting lines, one for each phase of the AC supply, and sometimes a thinner wire along the very top that acts as a ground wire to protect against lightning. AC lines become uneconomic beyond a few hundred kilometres, which is why the very longest links and undersea cables use high-voltage DC (HVDC) instead. Sweden has several, such as the Fenno-Skan link to Finland.</p>
     <p>As the power approaches the area where it will be used, the whole process runs in reverse. The voltage is <strong>stepped down</strong>, again in a substation, this time with a step-down transformer. That substation also holds a <strong>distribution bus</strong>, which splits the power and sends it off in several directions, along with the circuit breakers and switches that can disconnect a line if something goes wrong. From here, lower-voltage distribution lines carry the electricity the final stretch into our houses.</p>
+    <div class="ee-voltage-anim">
+<style>
+  .ee-voltage-anim {
+    /* Retheme here: adjust these six values to match your site */
+    --ee-ink: #2c2c2a;        /* primary text, transformer symbols, busbar */
+    --ee-muted: #5f5e5a;      /* structures: towers, poles, wires, dam */
+    --ee-hairline: #b4b2a9;   /* light outlines: fences, house, ground, leaders */
+    --ee-surface: #f7f6f2;    /* fills: buildings, dam, breakers, pole drum */
+    --ee-energy: #ef9f27;     /* the flowing power and the lit window */
+    --ee-water: #378add;      /* the reservoir */
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .ee-voltage-anim figure { margin: 0 0 32px 0; }
+  .ee-voltage-anim svg { display: block; width: 100%; height: auto; }
+  .ee-voltage-anim .ee-genrotor { transform-box: view-box; transform-origin: 165px 280px; }
+  @keyframes ee-spin { to { transform: rotate(360deg); } }
+  @keyframes ee-flow { to { stroke-dashoffset: -18; } }
+  @keyframes ee-pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .ee-voltage-anim .ee-genrotor { animation: ee-spin 1s linear infinite; }
+    .ee-voltage-anim .ee-flow { animation: ee-flow .9s linear infinite; }
+    .ee-voltage-anim .ee-win { animation: ee-pulse 2.4s ease-in-out infinite; }
+  }
+</style>
+ 
+<figure>
+<svg viewBox="0 0 680 360" role="img" aria-labelledby="ee-up-title ee-up-desc">
+  <title id="ee-up-title">Step-up: generation to transmission</title>
+  <desc id="ee-up-desc">Water from a dam drives a spinning generator at 10 to 20 kilovolts. A step-up transformer in a substation raises the voltage to 220 to 400 kilovolts, and three phase conductors plus a thin ground wire run across two steel lattice towers.</desc>
+ 
+  <!-- Ground -->
+  <line x1="40" y1="300" x2="640" y2="300" stroke="var(--ee-hairline)" stroke-width="1"/>
+ 
+  <!-- Reservoir, dam, penstock, powerhouse with spinning generator -->
+  <rect x="42" y="225" width="52" height="75" fill="var(--ee-water)" opacity=".3"/>
+  <path d="M46 228 q6 -3 12 0 t12 0 t12 0 t12 0" fill="none" stroke="var(--ee-water)" stroke-width="1.5" opacity=".7"/>
+  <path d="M94 220 L94 300 L128 300 C114 272 104 245 102 220 Z" fill="var(--ee-surface)" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <line x1="102" y1="255" x2="140" y2="286" stroke="var(--ee-muted)" stroke-width="3" opacity=".6"/>
+  <rect x="136" y="260" width="58" height="40" fill="var(--ee-surface)" stroke="var(--ee-muted)" stroke-width="1"/>
+  <circle cx="165" cy="280" r="13" fill="none" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <g class="ee-genrotor" stroke="var(--ee-ink)" stroke-width="2" stroke-linecap="round">
+    <line x1="157" y1="280" x2="173" y2="280"/>
+    <line x1="165" y1="272" x2="165" y2="288"/>
+  </g>
+  <circle cx="165" cy="280" r="2" fill="var(--ee-ink)"/>
+  <text x="165" y="252" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ee-muted)">10-20 kV</text>
+ 
+  <!-- Link to substation -->
+  <path d="M194 280 L212 280 L212 246 L232 246" fill="none" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <path class="ee-flow" d="M194 280 L212 280 L212 246 L232 246" fill="none" stroke="var(--ee-energy)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 15"/>
+ 
+  <!-- Step-up substation: fence, transformer symbol, feeder, gantry -->
+  <rect x="222" y="200" width="66" height="100" rx="3" fill="none" stroke="var(--ee-hairline)" stroke-width="1" stroke-dasharray="4 4"/>
+  <circle cx="243" cy="230" r="11" fill="none" stroke="var(--ee-ink)" stroke-width="1.5"/>
+  <circle cx="243" cy="246" r="11" fill="none" stroke="var(--ee-ink)" stroke-width="1.5"/>
+  <path d="M243 219 L243 196 L296 196" fill="none" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <path class="ee-flow" d="M243 219 L243 196 L296 196" fill="none" stroke="var(--ee-energy)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 15"/>
+  <line x1="296" y1="188" x2="296" y2="228" stroke="var(--ee-muted)" stroke-width="2.5"/>
+ 
+  <!-- Lattice towers -->
+  <g fill="none" stroke="var(--ee-muted)" stroke-width="1.5">
+    <path d="M331 300 L340 120 L349 300"/>
+    <line x1="334" y1="240" x2="346" y2="270"/>
+    <line x1="346" y1="240" x2="334" y2="270"/>
+    <line x1="336" y1="180" x2="344" y2="205"/>
+    <line x1="344" y1="180" x2="336" y2="205"/>
+    <line x1="318" y1="152" x2="362" y2="152"/>
+    <line x1="322" y1="172" x2="358" y2="172"/>
+    <line x1="326" y1="192" x2="354" y2="192"/>
+    <path d="M491 300 L500 120 L509 300"/>
+    <line x1="494" y1="240" x2="506" y2="270"/>
+    <line x1="506" y1="240" x2="494" y2="270"/>
+    <line x1="496" y1="180" x2="504" y2="205"/>
+    <line x1="504" y1="180" x2="496" y2="205"/>
+    <line x1="478" y1="152" x2="522" y2="152"/>
+    <line x1="482" y1="172" x2="518" y2="172"/>
+    <line x1="486" y1="192" x2="514" y2="192"/>
+  </g>
+ 
+  <!-- Ground wire with callout -->
+  <path d="M340 120 Q420 130 500 120 Q570 128 640 122" fill="none" stroke="var(--ee-muted)" stroke-width="0.75"/>
+  <line x1="534" y1="120" x2="546" y2="106" stroke="var(--ee-hairline)" stroke-width="0.75" stroke-dasharray="2 2"/>
+  <text x="548" y="104" font-size="12" fill="var(--ee-muted)">Ground wire</text>
+ 
+  <!-- Three phase conductors and flowing power -->
+  <g fill="none" stroke="var(--ee-muted)" stroke-width="1.5">
+    <path d="M296 192 Q318 176 340 152 Q420 170 500 152 Q570 166 640 154"/>
+    <path d="M296 206 Q318 192 340 172 Q420 190 500 172 Q570 184 640 174"/>
+    <path d="M296 220 Q318 208 340 192 Q420 208 500 192 Q570 202 640 193"/>
+  </g>
+  <g fill="none" stroke="var(--ee-energy)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 15">
+    <path class="ee-flow" d="M296 192 Q318 176 340 152 Q420 170 500 152 Q570 166 640 154"/>
+    <path class="ee-flow" d="M296 206 Q318 192 340 172 Q420 190 500 172 Q570 184 640 174"/>
+    <path class="ee-flow" d="M296 220 Q318 208 340 192 Q420 208 500 192 Q570 202 640 193"/>
+  </g>
+  <g fill="var(--ee-muted)">
+    <circle cx="340" cy="152" r="1.8"/><circle cx="340" cy="172" r="1.8"/><circle cx="340" cy="192" r="1.8"/>
+    <circle cx="500" cy="152" r="1.8"/><circle cx="500" cy="172" r="1.8"/><circle cx="500" cy="192" r="1.8"/>
+  </g>
+  <text x="420" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">220-400 kV</text>
+ 
+  <!-- Zone labels -->
+  <text x="118" y="326" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Generation</text>
+  <text x="118" y="344" text-anchor="middle" font-size="12" fill="var(--ee-muted)">Hydropower station</text>
+  <text x="255" y="326" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Step-up</text>
+  <text x="255" y="344" text-anchor="middle" font-size="12" fill="var(--ee-muted)">Transformer</text>
+  <text x="470" y="326" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Transmission</text>
+  <text x="470" y="344" text-anchor="middle" font-size="12" fill="var(--ee-muted)">Three phases + ground wire</text>
+</svg>
+</figure>
+ 
+<!-- ==================== SPLIT POINT ==================== -->
+ 
+<figure>
+<svg viewBox="0 0 680 360" role="img" aria-labelledby="ee-down-title ee-down-desc">
+  <title id="ee-down-title">Step-down: transmission to home</title>
+  <desc id="ee-down-desc">Three-phase transmission lines at 400 kilovolts enter a step-down substation containing a transformer, a distribution bus and circuit breakers. The power continues through a regional network at 130 kilovolts, a local network at 10 to 20 kilovolts, and a pole-mounted transformer delivering 400 or 230 volts to a house with a glowing window.</desc>
+  <defs>
+    <marker id="ee-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="var(--ee-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+ 
+  <!-- Ground -->
+  <line x1="40" y1="300" x2="640" y2="300" stroke="var(--ee-hairline)" stroke-width="1"/>
+ 
+  <!-- Incoming transmission -->
+  <text x="40" y="108" font-size="12" fill="var(--ee-muted)">400 kV in</text>
+  <g fill="none" stroke="var(--ee-muted)" stroke-width="1.5">
+    <path d="M40 126 Q70 136 100 130"/>
+    <path d="M40 141 Q70 150 100 145"/>
+    <path d="M40 156 Q70 164 100 160"/>
+  </g>
+  <g fill="none" stroke="var(--ee-energy)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 15">
+    <path class="ee-flow" d="M40 126 Q70 136 100 130"/>
+    <path class="ee-flow" d="M40 141 Q70 150 100 145"/>
+    <path class="ee-flow" d="M40 156 Q70 164 100 160"/>
+  </g>
+ 
+  <!-- Step-down substation: fence, gantry, transformer, bus, breakers -->
+  <rect x="78" y="112" width="118" height="188" rx="3" fill="none" stroke="var(--ee-hairline)" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="100" y1="124" x2="100" y2="166" stroke="var(--ee-muted)" stroke-width="2.5"/>
+  <line x1="100" y1="166" x2="100" y2="190" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <circle cx="100" cy="201" r="11" fill="none" stroke="var(--ee-ink)" stroke-width="1.5"/>
+  <circle cx="100" cy="217" r="11" fill="none" stroke="var(--ee-ink)" stroke-width="1.5"/>
+  <path d="M100 228 L100 250 L143 250" fill="none" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <path class="ee-flow" d="M100 228 L100 250 L143 250" fill="none" stroke="var(--ee-energy)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 15"/>
+  <line x1="145" y1="210" x2="145" y2="290" stroke="var(--ee-ink)" stroke-width="3.5"/>
+  <g stroke="var(--ee-muted)" stroke-width="1.5">
+    <line x1="147" y1="222" x2="158" y2="222"/><line x1="166" y1="222" x2="186" y2="222" marker-end="url(#ee-arrow)"/>
+    <line x1="147" y1="250" x2="158" y2="250"/><line x1="166" y1="250" x2="196" y2="250"/>
+    <line x1="147" y1="278" x2="158" y2="278"/><line x1="166" y1="278" x2="186" y2="278" marker-end="url(#ee-arrow)"/>
+  </g>
+  <g fill="var(--ee-surface)" stroke="var(--ee-ink)" stroke-width="1.2">
+    <rect x="158" y="218" width="8" height="8"/>
+    <rect x="158" y="246" width="8" height="8"/>
+    <rect x="158" y="274" width="8" height="8"/>
+  </g>
+  <line x1="168" y1="216" x2="202" y2="186" stroke="var(--ee-hairline)" stroke-width="0.75" stroke-dasharray="2 2"/>
+  <text x="206" y="182" font-size="12" fill="var(--ee-muted)">Circuit breakers</text>
+ 
+  <!-- Regional 130 kV -->
+  <line x1="290" y1="300" x2="290" y2="205" stroke="var(--ee-muted)" stroke-width="2"/>
+  <line x1="278" y1="212" x2="302" y2="212" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <path d="M196 250 Q240 242 290 210 Q334 218 376 222" fill="none" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <path class="ee-flow" d="M196 250 Q240 242 290 210 Q334 218 376 222" fill="none" stroke="var(--ee-energy)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 15"/>
+  <circle cx="290" cy="210" r="1.8" fill="var(--ee-muted)"/>
+  <text x="238" y="198" text-anchor="middle" font-size="12" fill="var(--ee-muted)">130 kV</text>
+ 
+  <!-- Regional to local transformer -->
+  <line x1="384" y1="300" x2="384" y2="244" stroke="var(--ee-muted)" stroke-width="2"/>
+  <circle cx="384" cy="222" r="8" fill="none" stroke="var(--ee-ink)" stroke-width="1.5"/>
+  <circle cx="384" cy="234" r="8" fill="none" stroke="var(--ee-ink)" stroke-width="1.5"/>
+  <path d="M392 234 Q432 246 473 242" fill="none" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <path class="ee-flow" d="M392 234 Q432 246 473 242" fill="none" stroke="var(--ee-energy)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 15"/>
+  <text x="430" y="218" text-anchor="middle" font-size="12" fill="var(--ee-muted)">10-20 kV</text>
+ 
+  <!-- Pole-mounted transformer and service drop -->
+  <line x1="480" y1="300" x2="480" y2="252" stroke="var(--ee-muted)" stroke-width="2"/>
+  <line x1="480" y1="232" x2="480" y2="214" stroke="var(--ee-muted)" stroke-width="2"/>
+  <rect x="473" y="232" width="14" height="20" rx="3" fill="var(--ee-surface)" stroke="var(--ee-ink)" stroke-width="1.2"/>
+  <path d="M487 242 Q520 250 552 224" fill="none" stroke="var(--ee-muted)" stroke-width="1.5"/>
+  <path class="ee-flow" d="M487 242 Q520 250 552 224" fill="none" stroke="var(--ee-energy)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 15"/>
+ 
+  <!-- House (load) -->
+  <line x1="552" y1="218" x2="552" y2="234" stroke="var(--ee-muted)" stroke-width="2"/>
+  <polygon points="527,246 578,216 629,246" fill="var(--ee-surface)" stroke="var(--ee-hairline)" stroke-width="1"/>
+  <rect x="534" y="246" width="88" height="54" fill="var(--ee-surface)" stroke="var(--ee-hairline)" stroke-width="1"/>
+  <rect class="ee-win" x="548" y="258" width="22" height="22" rx="2" fill="var(--ee-energy)"/>
+  <g stroke="var(--ee-hairline)" stroke-width="1">
+    <line x1="559" y1="258" x2="559" y2="280"/>
+    <line x1="548" y1="269" x2="570" y2="269"/>
+  </g>
+  <rect x="592" y="262" width="16" height="38" rx="2" fill="none" stroke="var(--ee-hairline)" stroke-width="1"/>
+ 
+  <!-- Zone labels -->
+  <text x="137" y="326" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Step-down substation</text>
+  <text x="137" y="344" text-anchor="middle" font-size="12" fill="var(--ee-muted)">Bus and breakers</text>
+  <text x="300" y="326" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Regional</text>
+  <text x="300" y="344" text-anchor="middle" font-size="12" fill="var(--ee-muted)">130 kV network</text>
+  <text x="432" y="326" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Local</text>
+  <text x="432" y="344" text-anchor="middle" font-size="12" fill="var(--ee-muted)">10-20 kV network</text>
+  <text x="580" y="326" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ee-ink)">Home</text>
+  <text x="580" y="344" text-anchor="middle" font-size="12" fill="var(--ee-muted)">400 / 230 V</text>
+</svg>
+</figure>
+</div>
+<!-- ==================== COPY TO HERE ==================== -->
     <p>In Sweden this sequence of voltages is handed down through a chain of operators. <strong>Svenska kraftn&auml;t (SvK)</strong>, the transmission system operator, owns the national grid at 400 kV and 220 kV and is responsible for keeping the whole system at 50 Hz. It steps the voltage down to around <strong>130 kV</strong> and passes the power to a regional network operator, such as <strong>Vattenfall Eldistribution</strong>, <strong>E.ON Energidistribution</strong> or <strong>Ellevio</strong>, which carries it onward and steps it down further, from 130 kV to roughly <strong>10 to 20 kV</strong>. Finally, a local network operator delivers it to homes and businesses, at 400 V across the three phases, or 230 V for ordinary single-phase equipment.</p>
-    <p>The frequency in this whole sequence only stays steady if the system can absorb sudden shocks, such as a lightning strike, a snapped line, or the loss of a whole power station. This is where traditional plants quietly do a great deal of work. They generate with heavy turbines and shafts spinning at high speed, and that spinning mass stores energy. When something goes wrong, this stored energy gives the system <strong>inertia</strong>, its natural resistance to change, so the frequency slides slowly instead of collapsing. It behaves rather like a child's spinning top, which resists being knocked over once it is going. Wind turbines and solar panels connect through power electronics and add little or no spinning inertia of their own, so as more renewables join the grid, operators increasingly rely on other tools, such as fast reserves that react within seconds, to do the same job.</p>
+    <p>The frequency in this whole sequence only stays steady if the system can absorb sudden shocks, such as a lightning strike, a snapped line, or the loss of a whole power station. This is where traditional plants quietly do a great deal of work. They generate with heavy turbines and shafts spinning at high speed, and that spinning mass stores energy. When something goes wrong, this stored energy gives the system <strong>inertia</strong>, its natural resistance to change, so the frequency decreases slowly instead of collapsing suddenly. It behaves rather like a child's spinning top, which resists being knocked over once it is going. Wind turbines and solar panels connect through power electronics and add little or no spinning inertia of their own, so as more renewables join the grid, operators increasingly rely on other tools, such as fast reserves that react within seconds, to do the same job.</p>
+    <p>In case of deviation,frequency regulation is done through four reserves or more commonly known as ancillary services. When load and production fall out of balance for any reason, SvK restores the grid through a sequence of frequency reserve products. The main three are FCR (Frequency Containment Reserve), aFRR (automatic Frequency Restoration Reserve), and mFRR (manual Frequency Restoration Reserve). In conditions of low inertia, when there is not enough spinning mass on the grid to cushion sudden changes, a fourth product, FFR (Fast Frequency Reserve), is also deployed. </p>
+    <div class="reserves-grid">
+      <div class="reserve-card">
+        <div class="reserve-tag">0–2 s</div>
+        <h4>FFR <span>Fast Frequency Reserve</span></h4>
+        <p>In conditions of low inertia, FFR is deployed as the first response. It is available only as upward capacity, that is, to inject power, and serves to prevent automatic load-shedding when frequency falls too quickly.</p>
+        <div class="reserve-role">Upward only · Automatic</div>
+      </div>
+
+      <div class="reserve-card">
+        <div class="reserve-tag">≤ 30 s</div>
+        <h4>FCR <span>Frequency Containment Reserve</span></h4>
+        <p>FCR is the first line of defence in an imbalance. When frequency falls below or rises above the 49.9 / 50.1 Hz band, FCR activates automatically within 30 seconds, adjusting power output up or down and holding it for up to 15 minutes. <strong>FCR-N</strong> (normal) handles small bidirectional deviations around 50 Hz, while <strong>FCR-D</strong> (disturbance) handles larger one-directional deviations following a sudden event. FCR is fully decentralised and automatic: each participating asset measures its own frequency and acts without any signal from the TSO.</p>
+        <div class="reserve-role">FCR-N bidirectional · FCR-D one-way · Automatic</div>
+      </div>
+
+      <div class="reserve-card">
+        <div class="reserve-tag">≤ 5 min</div>
+        <h4>aFRR <span>automatic Frequency Restoration Reserve</span></h4>
+        <p>aFRR is the next line of defence. It is dispatched automatically by the TSO within five minutes of an imbalance event and restores balance by adjusting either load or generation. It builds on the response initiated by FCR and continues to act until the frequency is fully restored to 50 Hz.</p>
+        <div class="reserve-role">Bidirectional · TSO-dispatched</div>
+      </div>
+
+      <div class="reserve-card">
+        <div class="reserve-tag">≤ 12.5 min</div>
+        <h4>mFRR <span>manual Frequency Restoration Reserve</span></h4>
+        <p>mFRR is reserved for longer or larger imbalances. It is dispatched manually by the TSO, and either supports or replaces aFRR, and can also be activated preventively, before an imbalance fully develops. It must be active within 12.5 minutes of the TSO's signal, and must hold for at least five minutes.</p>
+        <div class="reserve-role">Bidirectional · Manual</div>
+      </div>
+    </div>
+    <figure class="figure-fancy">
+  <style>
+    @keyframes ee-rsv-draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+    @keyframes ee-rsv-fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes ee-rsv-sweep { 0% { transform: translateX(0); opacity: 1; } 97% { opacity: 1; } 100% { transform: translateX(345px); opacity: 0; } }
+    .ee-rsv-ph { opacity: 0; }
+    @media (prefers-reduced-motion: no-preference) {
+      .ee-rsv-run .ee-rsv-d1 { animation: ee-rsv-draw 1.6s linear both; }
+      .ee-rsv-run .ee-rsv-d2 { animation: ee-rsv-draw 3.5s linear .15s both; }
+      .ee-rsv-run .ee-rsv-d3 { animation: ee-rsv-draw 5.35s linear 1.6s both; }
+      .ee-rsv-run .ee-rsv-d4 { animation: ee-rsv-draw 5.65s linear 4.35s both; }
+      .ee-rsv-run .ee-rsv-d5 { animation: ee-rsv-draw 10s linear both; }
+      .ee-rsv-run .ee-rsv-l1 { animation: ee-rsv-fade .4s .5s both; }
+      .ee-rsv-run .ee-rsv-l2 { animation: ee-rsv-fade .4s 1.2s both; }
+      .ee-rsv-run .ee-rsv-l3 { animation: ee-rsv-fade .4s 2.8s both; }
+      .ee-rsv-run .ee-rsv-l4 { animation: ee-rsv-fade .4s 5.2s both; }
+      .ee-rsv-run .ee-rsv-ph { animation: ee-rsv-sweep 10s linear both; }
+    }
+    .ee-rsv-btn { margin-top: 8px; padding: 5px 14px; border: 1px solid #ccc; border-radius: 5px; background: #fff; color: #333; font-size: 12px; font-family: inherit; cursor: pointer; }
+    .ee-rsv-btn:hover { border-color: #999; }
+  </style>
+  <div class="diagram diagram-curves">
+    <div class="diag-title">Figure · How the reserves overlap during a disturbance</div>
+    <div id="ee-rsv" class="ee-rsv-run">
+    <svg viewBox="0 0 420 320" width="100%" height="320" aria-hidden="true" font-family="Inter, sans-serif">
+      <!-- ===== TOP PANEL: Reserve activations (MW) ===== -->
+      <text x="10" y="14" font-size="9" fill="#444" font-weight="600">Reserve activations (MW)</text>
+      <!-- y axis -->
+      <line x1="50" y1="20" x2="50" y2="130" stroke="#444" stroke-width="0.8"/>
+      <!-- x axis (top panel baseline) -->
+      <line x1="50" y1="130" x2="395" y2="130" stroke="#444" stroke-width="0.8"/>
+ 
+      <!-- Vertical dashed time markers spanning both panels -->
+      <line x1="105" y1="20" x2="105" y2="265" stroke="#bbb" stroke-width="0.6" stroke-dasharray="2,3"/>
+      <line x1="170" y1="20" x2="170" y2="265" stroke="#bbb" stroke-width="0.6" stroke-dasharray="2,3"/>
+      <line x1="285" y1="20" x2="285" y2="265" stroke="#bbb" stroke-width="0.6" stroke-dasharray="2,3"/>
+ 
+      <!-- FFR curve: very early sharp pulse, peaks before 30s, falls back fast -->
+      <path class="ee-rsv-d1" pathLength="100" stroke-dasharray="100" d="M 50 130 Q 65 30 80 32 Q 95 35 105 130" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+      <text class="ee-rsv-l1" x="62" y="42" font-size="9" font-weight="700" fill="#1a1a1a">FFR</text>
+ 
+      <!-- FCR curve: rises with FFR, peaks around 30s-1min, sustains then falls by ~2min -->
+      <path class="ee-rsv-d2" pathLength="100" stroke-dasharray="100" d="M 55 130 Q 90 40 130 45 Q 160 50 175 130" fill="none" stroke="#3a7ec4" stroke-width="2"/>
+      <text class="ee-rsv-l2" x="115" y="55" font-size="9" font-weight="700" fill="#3a7ec4">FCR</text>
+ 
+      <!-- aFRR curve: starts rising as FCR begins to fall, peaks around 2-5min, decays by ~15min -->
+      <path class="ee-rsv-d3" pathLength="100" stroke-dasharray="100" d="M 105 130 Q 160 50 215 50 Q 260 55 290 130" fill="none" stroke="#4a8a5a" stroke-width="2"/>
+      <text class="ee-rsv-l3" x="200" y="62" font-size="9" font-weight="700" fill="#4a8a5a">aFRR</text>
+ 
+      <!-- mFRR curve: starts later, rises slowly, sustained plateau out past 15min -->
+      <path class="ee-rsv-d4" pathLength="100" stroke-dasharray="100" d="M 200 130 Q 260 60 310 55 L 395 55" fill="none" stroke="#c44a4a" stroke-width="2"/>
+      <text class="ee-rsv-l4" x="320" y="48" font-size="9" font-weight="700" fill="#c44a4a">mFRR</text>
+ 
+      <!-- "Tid" (time) arrow label on x axis -->
+      <text x="400" y="133" font-size="8" fill="#444" font-style="italic">Tid</text>
+ 
+      <!-- ===== BOTTOM PANEL: Frequency (Hz) ===== -->
+      <text x="10" y="155" font-size="9" fill="#444" font-weight="600">Frequency (Hz)</text>
+      <line x1="50" y1="160" x2="50" y2="270" stroke="#444" stroke-width="0.8"/>
+      <line x1="50" y1="270" x2="395" y2="270" stroke="#444" stroke-width="0.8"/>
+ 
+      <!-- Y-axis reference labels -->
+      <text x="46" y="172" font-size="8" fill="#444" text-anchor="end">50.0 Hz</text>
+      <text x="46" y="192" font-size="8" fill="#444" text-anchor="end">49.9 Hz</text>
+      <text x="46" y="232" font-size="8" fill="#444" text-anchor="end">49.7 Hz</text>
+ 
+      <!-- 50.0 Hz horizontal reference -->
+      <line x1="50" y1="170" x2="395" y2="170" stroke="#888" stroke-width="0.5" stroke-dasharray="2,2"/>
+      <line x1="50" y1="190" x2="395" y2="190" stroke="#bbb" stroke-width="0.5" stroke-dasharray="2,2"/>
+      <line x1="50" y1="230" x2="395" y2="230" stroke="#bbb" stroke-width="0.5" stroke-dasharray="2,2"/>
+ 
+      <!-- Frequency curve: starts at 50.0, dips quickly to ~49.7, recovers through ~49.9 back to 50.0 -->
+      <path class="ee-rsv-d5" pathLength="100" stroke-dasharray="100" d="M 50 170 Q 70 175 85 230 Q 105 240 130 195 Q 170 175 230 170 L 395 170"
+            fill="none" stroke="#d49a2a" stroke-width="2"/>
+ 
+      <text x="400" y="273" font-size="8" fill="#444" font-style="italic">Tid</text>
+ 
+      <!-- Playhead sweeping across both panels, split around the panel labels -->
+      <g class="ee-rsv-ph">
+        <line x1="50" y1="20" x2="50" y2="130" stroke="#1a1a1a" stroke-width="1"/>
+        <line x1="50" y1="160" x2="50" y2="270" stroke="#1a1a1a" stroke-width="1"/>
+      </g>
+ 
+      <!-- Time labels along the bottom axis -->
+      <text x="105" y="285" font-size="8" fill="#444" text-anchor="middle">30 sec</text>
+      <text x="170" y="285" font-size="8" fill="#444" text-anchor="middle">2 min</text>
+      <text x="285" y="285" font-size="8" fill="#444" text-anchor="middle">15 min</text>
+ 
+      <!-- Reserve colored chips along very bottom -->
+      <rect x="55" y="298" width="35" height="14" fill="#1a1a1a"/>
+      <text x="72.5" y="308" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">FFR</text>
+ 
+      <rect x="95" y="298" width="55" height="14" fill="#3a7ec4"/>
+      <text x="122.5" y="308" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">FCR</text>
+ 
+      <rect x="155" y="298" width="100" height="14" fill="#4a8a5a"/>
+      <text x="205" y="308" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">aFRR</text>
+ 
+      <rect x="260" y="298" width="130" height="14" fill="#c44a4a"/>
+      <text x="325" y="308" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">mFRR</text>
+    </svg>
+    <button type="button" class="ee-rsv-btn" onclick="eeRsvReplay()">Replay</button>
+    </div>
+    <ul class="diag-legend">
+      <li><span style="background:#1a1a1a"></span><strong>FFR</strong> slows the frequency fall</li>
+      <li><span style="background:#3a7ec4"></span><strong>FCR</strong> stops the fall and stabilises frequency</li>
+      <li><span style="background:#4a8a5a"></span><strong>aFRR</strong> brings frequency back to 50.0 Hz</li>
+      <li><span style="background:#c44a4a"></span><strong>mFRR</strong> relieves aFRR and holds until the problem is solved</li>
+    </ul>
+  </div>
+  <figcaption>Adapted from ENTSO-E, <a href="https://eepublicdownloads.blob.core.windows.net/public-cdn-container/clean-documents/Publications/SOC/Nordic/2024/Nordic_balancing_philosophy_Final_edit_.pdf" target="_blank" rel="noopener">Nordic Balancing Philosophy (2024)</a>, Figure 3.</figcaption>
+  <script>
+    function eeRsvReplay() {
+      var el = document.getElementById('ee-rsv');
+      el.classList.remove('ee-rsv-run');
+      void el.offsetWidth;
+      el.classList.add('ee-rsv-run');
+    }
+  </script>
+</figure>
+
     <p>So what actually happens when a fault occurs? The sequence is always the same: <strong>detect, isolate, restore</strong>. Measurement devices and protection relays spread across the grid sense sudden changes in voltage, current and other key signals. Once a fault is confirmed, a digital relay sends a trip signal and a circuit breaker opens to cut the faulty section off, with backup protection standing by in case the main breaker fails to act. The whole point is to keep the disturbance local, because the grid is so tightly interconnected that an unchecked fault could ripple outward through the rest of it. Only then comes the repair, and how long that takes depends on the fault: an instrument upset by a lightning surge is a quick fix, while a physically damaged line can take much longer.</p>
     <p>Overseeing the entire process is a control system called <strong>SCADA</strong> (Supervisory Control and Data Acquisition). From the national control room it watches the whole transmission grid in real time, tracking frequency, voltage, line loading and switch positions, and sends commands back out to the equipment. That room runs 24 hours a day, every day of the year, making the continuous small adjustments that keep production and consumption in balance at 50 Hz.</p>
   </div>
@@ -854,157 +1323,6 @@ footer { border-top: 1px solid var(--line); padding: 40px 60px; text-align: cent
       </div>
     </div>
   </div>
-
-  <!-- Frequency reserves -->
-  <div class="reserves-block">
-    <div class="reserves-intro">
-      <h3 class="narrative-title">Frequency regulation: the four reserves aka Ancillary services</h3>
-      <p>When load and production fall out of balance, for any reason, the TSO restores the grid through a sequence of <strong>frequency reserve products</strong>. The main three are <strong>FCR</strong> (Frequency Containment Reserve), <strong>aFRR</strong> (automatic Frequency Restoration Reserve), and <strong>mFRR</strong> (manual Frequency Restoration Reserve). In conditions of low <em>inertia</em>, when there is not enough spinning mass on the grid to cushion sudden changes, a fourth product, <strong>FFR</strong> (Fast Frequency Reserve), is also deployed.</p>
-    </div>
-
-    <div class="reserves-grid">
-      <div class="reserve-card">
-        <div class="reserve-tag">0–2 s</div>
-        <h4>FFR <span>Fast Frequency Reserve</span></h4>
-        <p>In conditions of low inertia, FFR is deployed as the first response. It is available only as upward capacity, that is, to inject power, and serves to prevent automatic load-shedding when frequency falls too quickly.</p>
-        <div class="reserve-role">Upward only · Automatic</div>
-      </div>
-
-      <div class="reserve-card">
-        <div class="reserve-tag">≤ 30 s</div>
-        <h4>FCR <span>Frequency Containment Reserve</span></h4>
-        <p>FCR is the first line of defence in an imbalance. When frequency falls below or rises above the 49.9 / 50.1 Hz band, FCR activates automatically within 30 seconds, adjusting power output up or down and holding it for up to 15 minutes. <strong>FCR-N</strong> (normal) handles small bidirectional deviations around 50 Hz, while <strong>FCR-D</strong> (disturbance) handles larger one-directional deviations following a sudden event. FCR is fully decentralised and automatic: each participating asset measures its own frequency and acts without any signal from the TSO.</p>
-        <div class="reserve-role">FCR-N bidirectional · FCR-D one-way · Automatic</div>
-      </div>
-
-      <div class="reserve-card">
-        <div class="reserve-tag">≤ 5 min</div>
-        <h4>aFRR <span>automatic Frequency Restoration Reserve</span></h4>
-        <p>aFRR is the next line of defence. It is dispatched automatically by the TSO within five minutes of an imbalance event and restores balance by adjusting either load or generation. It builds on the response initiated by FCR and continues to act until the frequency is fully restored to 50 Hz.</p>
-        <div class="reserve-role">Bidirectional · TSO-dispatched</div>
-      </div>
-
-      <div class="reserve-card">
-        <div class="reserve-tag">≤ 12.5 min</div>
-        <h4>mFRR <span>manual Frequency Restoration Reserve</span></h4>
-        <p>mFRR is reserved for longer or larger imbalances. It is dispatched manually by the TSO, and either supports or replaces aFRR, and can also be activated preventively, before an imbalance fully develops. It must be active within 12.5 minutes of the TSO's signal, and must hold for at least five minutes.</p>
-        <div class="reserve-role">Bidirectional · Manual</div>
-      </div>
-    </div>
-
-    <div class="figure-row">
-      <figure class="figure-fancy">
-        <div class="diagram diagram-products">
-          <div class="diag-title">Figure 1 · Reserve products in the Nordic power system</div>
-          <div class="diag-grid">
-            <div class="diag-header"></div>
-            <div class="diag-header">Frequency Containment</div>
-            <div class="diag-header">Frequency Restoration</div>
-            <div class="diag-header">Replacement</div>
-
-            <div class="diag-row-label">Automatic</div>
-            <div class="diag-cell"><span class="diag-chip ffr">FFR</span><span class="diag-chip">FCR-D</span><span class="diag-chip">FCR-N</span></div>
-            <div class="diag-cell"><span class="diag-chip">aFRR</span></div>
-            <div class="diag-cell muted">N/A</div>
-
-            <div class="diag-row-label">Manual</div>
-            <div class="diag-cell"></div>
-            <div class="diag-cell"><span class="diag-chip">mFRR</span></div>
-            <div class="diag-cell muted">N/A</div>
-          </div>
-          <div class="diag-axis">
-            <span>Seconds</span><span>Minutes</span><span>12.5 min</span><span>Hours</span>
-          </div>
-        </div>
-        <figcaption>Adapted from ENTSO-E, <a href="https://eepublicdownloads.blob.core.windows.net/public-cdn-container/clean-documents/Publications/SOC/Nordic/2024/Nordic_balancing_philosophy_Final_edit_.pdf" target="_blank" rel="noopener">Nordic Balancing Philosophy (2024)</a>, Figure 2.</figcaption>
-      </figure>
-
-      <figure class="figure-fancy">
-        <div class="diagram diagram-curves">
-          <div class="diag-title">Figure 2 · How the reserves overlap during a disturbance</div>
-          <svg viewBox="0 0 420 320" width="100%" height="320" aria-hidden="true" font-family="Inter, sans-serif">
-            <!-- ===== TOP PANEL: Reserve activations (MW) ===== -->
-            <text x="10" y="14" font-size="9" fill="#444" font-weight="600">Reserve activations (MW)</text>
-            <!-- y axis -->
-            <line x1="50" y1="20" x2="50" y2="130" stroke="#444" stroke-width="0.8"/>
-            <!-- x axis (top panel baseline) -->
-            <line x1="50" y1="130" x2="395" y2="130" stroke="#444" stroke-width="0.8"/>
-
-            <!-- Vertical dashed time markers spanning both panels -->
-            <line x1="105" y1="20" x2="105" y2="265" stroke="#bbb" stroke-width="0.6" stroke-dasharray="2,3"/>
-            <line x1="170" y1="20" x2="170" y2="265" stroke="#bbb" stroke-width="0.6" stroke-dasharray="2,3"/>
-            <line x1="285" y1="20" x2="285" y2="265" stroke="#bbb" stroke-width="0.6" stroke-dasharray="2,3"/>
-
-            <!-- FFR curve: very early sharp pulse, peaks before 30s, falls back fast -->
-            <path d="M 50 130 Q 65 30 80 32 Q 95 35 105 130" fill="none" stroke="#1a1a1a" stroke-width="2"/>
-            <text x="62" y="42" font-size="9" font-weight="700" fill="#1a1a1a">FFR</text>
-
-            <!-- FCR curve: rises with FFR, peaks around 30s-1min, sustains then falls by ~2min -->
-            <path d="M 55 130 Q 90 40 130 45 Q 160 50 175 130" fill="none" stroke="#3a7ec4" stroke-width="2"/>
-            <text x="115" y="55" font-size="9" font-weight="700" fill="#3a7ec4">FCR</text>
-
-            <!-- aFRR curve: starts rising as FCR begins to fall, peaks around 2-5min, decays by ~15min -->
-            <path d="M 105 130 Q 160 50 215 50 Q 260 55 290 130" fill="none" stroke="#4a8a5a" stroke-width="2"/>
-            <text x="200" y="62" font-size="9" font-weight="700" fill="#4a8a5a">aFRR</text>
-
-            <!-- mFRR curve: starts later, rises slowly, sustained plateau out past 15min -->
-            <path d="M 200 130 Q 260 60 310 55 L 395 55" fill="none" stroke="#c44a4a" stroke-width="2"/>
-            <text x="320" y="48" font-size="9" font-weight="700" fill="#c44a4a">mFRR</text>
-
-            <!-- "Tid" (time) arrow label on x axis -->
-            <text x="400" y="133" font-size="8" fill="#444" font-style="italic">Tid</text>
-
-            <!-- ===== BOTTOM PANEL: Frequency (Hz) ===== -->
-            <text x="10" y="155" font-size="9" fill="#444" font-weight="600">Frequency (Hz)</text>
-            <line x1="50" y1="160" x2="50" y2="270" stroke="#444" stroke-width="0.8"/>
-            <line x1="50" y1="270" x2="395" y2="270" stroke="#444" stroke-width="0.8"/>
-
-            <!-- Y-axis reference labels -->
-            <text x="46" y="172" font-size="8" fill="#444" text-anchor="end">50.0 Hz</text>
-            <text x="46" y="192" font-size="8" fill="#444" text-anchor="end">49.9 Hz</text>
-            <text x="46" y="232" font-size="8" fill="#444" text-anchor="end">49.7 Hz</text>
-
-            <!-- 50.0 Hz horizontal reference -->
-            <line x1="50" y1="170" x2="395" y2="170" stroke="#888" stroke-width="0.5" stroke-dasharray="2,2"/>
-            <line x1="50" y1="190" x2="395" y2="190" stroke="#bbb" stroke-width="0.5" stroke-dasharray="2,2"/>
-            <line x1="50" y1="230" x2="395" y2="230" stroke="#bbb" stroke-width="0.5" stroke-dasharray="2,2"/>
-
-            <!-- Frequency curve: starts at 50.0, dips quickly to ~49.7, recovers through ~49.9 back to 50.0 -->
-            <path d="M 50 170 Q 70 175 85 230 Q 105 240 130 195 Q 170 175 230 170 L 395 170"
-                  fill="none" stroke="#d49a2a" stroke-width="2"/>
-
-            <text x="400" y="173" font-size="8" fill="#444" font-style="italic">Tid</text>
-
-            <!-- Time labels along the bottom axis -->
-            <text x="105" y="285" font-size="8" fill="#444" text-anchor="middle">30 sec</text>
-            <text x="170" y="285" font-size="8" fill="#444" text-anchor="middle">2 min</text>
-            <text x="285" y="285" font-size="8" fill="#444" text-anchor="middle">15 min</text>
-
-            <!-- Reserve colored chips along very bottom -->
-            <rect x="55" y="298" width="35" height="14" fill="#1a1a1a"/>
-            <text x="72.5" y="308" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">FFR</text>
-
-            <rect x="95" y="298" width="55" height="14" fill="#3a7ec4"/>
-            <text x="122.5" y="308" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">FCR</text>
-
-            <rect x="155" y="298" width="100" height="14" fill="#4a8a5a"/>
-            <text x="205" y="308" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">aFRR</text>
-
-            <rect x="260" y="298" width="130" height="14" fill="#c44a4a"/>
-            <text x="325" y="308" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">mFRR</text>
-          </svg>
-          <ul class="diag-legend">
-            <li><span style="background:#1a1a1a"></span><strong>FFR</strong> slows the frequency fall</li>
-            <li><span style="background:#3a7ec4"></span><strong>FCR</strong> stops the fall and stabilises frequency</li>
-            <li><span style="background:#4a8a5a"></span><strong>aFRR</strong> brings frequency back to 50.0 Hz</li>
-            <li><span style="background:#c44a4a"></span><strong>mFRR</strong> relieves aFRR and holds until the problem is solved</li>
-          </ul>
-        </div>
-        <figcaption>Adapted from ENTSO-E, <a href="https://eepublicdownloads.blob.core.windows.net/public-cdn-container/clean-documents/Publications/SOC/Nordic/2024/Nordic_balancing_philosophy_Final_edit_.pdf" target="_blank" rel="noopener">Nordic Balancing Philosophy (2024)</a>, Figure 3.</figcaption>
-      </figure>
-    </div>
-  </div>
-
   <!-- Unit cheat sheet -->
   <div class="basics-units">
     <strong>Quick unit cheat sheet</strong>
@@ -1015,17 +1333,6 @@ footer { border-top: 1px solid var(--line); padding: 40px 60px; text-align: cent
     <div class="row"><span class="unit">€ / MWh</span><span>The wholesale market price on Nord Pool. 1 €/MWh ≈ 1.15 öre/kWh at an exchange rate of SEK 11.5 per EUR.</span></div>
     <div class="row"><span class="unit">Hz</span><span>Hertz, cycles per second. The Nordic grid operates at 50 Hz. Frequency rises when supply exceeds demand, and falls when demand exceeds supply.</span></div>
   </div>
-
-  <!-- Sources -->
-  <div class="sources">
-    <strong>Sources &amp; further reading</strong>
-    <ul>
-      <li>Vattenfall: <a href="https://powerplants.vattenfall.com/#/view=map/sort=name" target="_blank" rel="noopener">Interactive power plants map</a></li>
-      <li>Energimyndigheten: <a href="https://www.energimyndigheten.se/en/facts-and-figures/swedens-energy-system--an-overview/how-the-energy-system-works/an-energy-system-in-balance/" target="_blank" rel="noopener">An energy system in balance</a></li>
-      <li>AI Sweden: <a href="https://www.behovskartan.se/" target="_blank" rel="noopener">Behovskartan (electricity demand projection map)</a></li>
-      <li>ENTSO-E: <a href="https://eepublicdownloads.blob.core.windows.net/public-cdn-container/clean-documents/Publications/SOC/Nordic/2024/Nordic_balancing_philosophy_Final_edit_.pdf" target="_blank" rel="noopener">Nordic Balancing Philosophy (2024)</a>, source of Figures 1 and 2</li>
-    </ul>
-  </div>
 </section>
 
 <!-- 02 LANDSCAPE -->
@@ -1034,43 +1341,12 @@ footer { border-top: 1px solid var(--line); padding: 40px 60px; text-align: cent
     <div class="num">02</div>
     <div>
       <h2>Energy tech landscape</h2>
-      <div class="subtitle">The five clusters of technology that make the modern power system work. Click any cluster to explore.</div>
+      <div class="subtitle">The five clusters of technology that make the modern power system work, plus green hydrogen as an honourable mention.</div>
     </div>
   </div>
 
   <div class="landscape-wrap">
-    <div class="canvas">
-      <div class="zone" data-zone="gen" style="left:0%; top:0%; width:32.5%; height:48%; background:#bfd0d9; border-color:#5a7986; color:#2d4858;">
-        <div class="zone-accent" style="background:#2d4858;"></div>
-        <div class="zone-name">GENERATION</div>
-        <div class="hover-hint">CLICK TO OPEN</div>
-      </div>
-      <div class="zone" data-zone="sto" style="left:33.75%; top:0%; width:32.5%; height:48%; background:#c8d4b8; border-color:#647d4b; color:#3d4d2a;">
-        <div class="zone-accent" style="background:#3d4d2a;"></div>
-        <div class="zone-name">STORAGE</div>
-        <div class="hover-hint">CLICK TO OPEN</div>
-      </div>
-      <div class="zone" data-zone="grid" style="left:67.5%; top:0%; width:32.5%; height:48%; background:#cdc4d5; border-color:#6b5d7e; color:#3f3454;">
-        <div class="zone-accent" style="background:#3f3454;"></div>
-        <div class="zone-name">GRID OPTIMIZATION TECHNOLOGIES</div>
-        <div class="hover-hint">CLICK TO OPEN</div>
-      </div>
-      <div class="zone" data-zone="smart" style="left:0%; top:52%; width:49.25%; height:30%; background:#d8c1c8; border-color:#8a5a68; color:#5a3340;">
-        <div class="zone-accent" style="background:#5a3340;"></div>
-        <div class="zone-name">SMART EQUIPMENT</div>
-        <div class="hover-hint">CLICK TO OPEN</div>
-      </div>
-      <div class="zone" data-zone="cons" style="left:50.75%; top:52%; width:49.25%; height:30%; background:#e0d4b0; border-color:#8c7544; color:#5a4724;">
-        <div class="zone-accent" style="background:#5a4724;"></div>
-        <div class="zone-name">CONSUMER</div>
-        <div class="hover-hint">CLICK TO OPEN</div>
-      </div>
-      <div class="zone" data-zone="h2" style="left:0%; top:85%; width:100%; height:15%; background:#c8d8c4; border-color:#3d6b4f; color:#1e3d2a;">
-        <div class="zone-accent" style="background:#1e3d2a;"></div>
-        <div class="zone-name">★ HONOURABLE MENTION: GREEN HYDROGEN</div>
-        <div class="hover-hint">CLICK TO OPEN</div>
-      </div>
-    </div>
+    <div class="landscape-static" id="landscape-static"></div>
   </div>
 </section>
 
@@ -2359,16 +2635,27 @@ function closeZoom() {
   el.style.top = r.top + 'px';
   el.style.width = r.width + 'px';
   el.style.height = r.height + 'px';
-  const finish = e => {
-    if (e.target !== el || e.propertyName !== 'width') return;
-    el.removeEventListener('transitionend', finish);
+  let done = false;
+  const cleanup = () => {
+    if (done) return;
+    done = true;
+    el.removeEventListener('transitionend', onEnd);
     el.classList.remove('zone-zoom');
     el.setAttribute('style', zoomOrigStyle);
     const c = el.querySelector('.zoom-content'); if (c) c.remove();
     document.body.style.overflow = '';
     zoomOpen = false; zoomEl = null;
   };
-  el.addEventListener('transitionend', finish);
+  // On mobile the tile is already full-width, so the width never animates and
+  // its transitionend never fires. Accept any of the geometry transitions, and
+  // keep a timeout fallback so the page can never get stuck.
+  const onEnd = e => {
+    if (e.target !== el) return;
+    if (!['width', 'height', 'left', 'top'].includes(e.propertyName)) return;
+    cleanup();
+  };
+  el.addEventListener('transitionend', onEnd);
+  setTimeout(cleanup, 600);
 }
 
 document.querySelectorAll('.zone').forEach(el => {
@@ -2376,8 +2663,29 @@ document.querySelectorAll('.zone').forEach(el => {
     if (zoomOpen) return;
     openZoom(el, el.dataset.zone);
   };
-  el.addEventListener('click', handle);
-  el.addEventListener('touchend', e => { e.preventDefault(); handle(); });
+  // Robust tap handling for touch devices: detect a real tap (finger did not
+  // move, i.e. not a scroll) and fire on touchend WITHOUT preventDefault, so the
+  // browser never mistakes the tile for a scroll surface and swallows the tap.
+  // Fall back to click for mouse/desktop; a flag stops the ghost click double-firing.
+  let sx = 0, sy = 0, moved = false, tapped = false;
+  el.addEventListener('touchstart', e => {
+    const t = e.changedTouches[0];
+    sx = t.clientX; sy = t.clientY; moved = false;
+  }, { passive: true });
+  el.addEventListener('touchmove', e => {
+    const t = e.changedTouches[0];
+    if (Math.abs(t.clientX - sx) > 10 || Math.abs(t.clientY - sy) > 10) moved = true;
+  }, { passive: true });
+  el.addEventListener('touchend', () => {
+    if (moved) return;
+    tapped = true;
+    handle();
+    setTimeout(() => { tapped = false; }, 500);
+  });
+  el.addEventListener('click', () => {
+    if (tapped) return;
+    handle();
+  });
 });
 backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
 document.getElementById('close-btn').addEventListener('click', closeModal);
@@ -2390,6 +2698,40 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 
+
+// ---- Static landscape render: expand every cluster + flatten inner tabs ----
+(function renderLandscapeStatic(){
+  var host = document.getElementById('landscape-static');
+  if (!host || typeof ZONES === 'undefined') return;
+  var order = ['gen','sto','grid','smart','cons','h2'];
+  order.forEach(function(key){
+    var z = ZONES[key]; if (!z) return;
+    var block = document.createElement('div');
+    block.className = 'ls-block';
+    block.style.borderTopColor = z.accent;
+    block.innerHTML =
+      '<div class="ls-accent" style="background:' + z.accent + '"></div>'
+      + '<h2 class="ls-title" style="color:' + z.accent + '">' + z.title + '</h2>'
+      + z.body;
+    host.appendChild(block);
+  });
+  // Turn each tab bar into stacked, labelled sections (no clicking required)
+  host.querySelectorAll('.gen-tabs').forEach(function(tabs){
+    var container = tabs.parentElement;
+    tabs.querySelectorAll('.gen-tab').forEach(function(btn){
+      var val = btn.getAttribute('data-gen');
+      var panel = container.querySelector('.gen-panel[data-gen-panel="' + val + '"]');
+      if (panel) {
+        var h = document.createElement('h3');
+        h.className = 'ls-subhead';
+        h.textContent = btn.textContent;
+        panel.insertBefore(h, panel.firstChild);
+        panel.classList.add('active');
+      }
+    });
+    tabs.remove();
+  });
+})();
 </script>
 
 </body>
